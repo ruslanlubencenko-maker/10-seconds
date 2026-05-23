@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@1,400&display=swap');
+
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: #000; 
+    color: #fff; 
+    font-family: 'Montserrat', sans-serif; 
+    overflow: hidden; 
+}
+
+.screen { 
+    display: none; 
+    width: 100%; 
+    height: 100%; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 20px; 
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active { 
+    display: flex; 
+}
+
+/* Заголовок вопроса (шрифт Playfair Display) */
+h1 { 
+    font-family: 'Playfair Display', serif; 
+    font-style: italic; 
+    font-size: 42px; 
+    margin-bottom: 30px; 
+    font-weight: 400; 
+    text-align: center;
+}
+
+.input-container { 
+    width: 100%; 
+    max-width: 320px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center;
+    gap: 15px; 
+}
+
+/* Поле ввода (прозрачное с белой рамкой) */
+input { 
+    width: 100%; 
+    background: transparent; 
+    border: 2px solid #fff; 
+    border-radius: 50px; 
+    padding: 18px; 
+    color: #fff; 
+    text-align: center; 
+    font-size: 18px; 
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+input::placeholder { 
+    color: rgba(255, 255, 255, 0.4); 
+}
+
+/* Серый цвет текста и рамки, когда ответ отправлен */
+.grey-text { 
+    color: #555 !important; 
+    border-color: #333 !important; 
+}
+
+/* Основная белая кнопка */
+.main-btn { 
+    width: 100%; 
+    background: #fff; 
+    border: none; 
+    border-radius: 50px; 
+    padding: 18px; 
+    color: #000; 
+    font-size: 20px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    transition: transform 0.1s, opacity 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.main-btn:active { 
+    transform: scale(0.97); 
+    opacity: 0.9; 
+}
+
+/* Кнопка "в начало" */
+.reset-link {
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    cursor: pointer;
+    text-align: center;
+    font-weight: 400;
+    font-family: 'Montserrat', sans-serif;
+    padding: 10px;
+}
+
+.reset-link:hover {
+    color: #fff;
+}
+
+/* Скрытие элементов */
+.hidden { 
+    display: none !important; 
+}

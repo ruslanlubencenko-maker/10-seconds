@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stage Participants</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="screen-reg" class="screen">
+        <div class="input-container">
+            <input type="text" id="reg-name" placeholder="введите имя">
+            <button class="main-btn" onclick="register()">Отправить</button>
+        </div>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <h1 id="q-title">Вопрос 01</h1>
+        <div class="input-container">
+            <input type="text" id="ans-input" placeholder="введите число">
+            <button id="btn-send" class="main-btn" onclick="sendAnswer()">Отправить</button>
+            <button id="btn-next" class="main-btn hidden" onclick="nextQuestion()">Далее</button>
+            
+            <div class="reset-link" onclick="resetToStart()">в начало</div>
+        </div>
+    </div>
+
+    <script>
+        // Твой новый актуальный URL скрипта
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxMIWGxTDuaLS7-s46_njvxG-R3IDwxhWuPT1ZO4ACUz78iLqOqMSRaqplN8hmXKbp/exec";
+        
+        let userName = localStorage.getItem('stage_name') || "";
+        let currentQ = parseInt(localStorage.getItem('stage_q')) || 1;
+        let isAnswered = localStorage.getItem('stage_answered') === "true";
+
+        window.onload = () => {
+            if (userName) showGame();
+            else showScreen('screen-reg');
+        };
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function resetToStart() {
+            if(confirm("Вернуться в начало и ввести другое имя?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('reg-name').value;
+            if (!name) return;
+            userName = name;
+            localStorage.setItem('stage_name', name);
+            localStorage.setItem('stage_q', 1);
+            
+            showGame(); 
+
+            // Добавлен заголовок Content-Type для стабильной работы
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action: "register", name: userName })
+            });
+        }
+
+        function showGame() {
+            showScreen('screen-game');
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('q-title').innerText = "Вопрос " + (currentQ < 10 ? "0" + currentQ : currentQ);
+            const input = document.getElementById('ans-input');
+            const btnSend = document.getElementById('btn-send');
+            const btnNext = document.getElementById('btn-next');
+
+            if (isAnswered) {
+                input.disabled = true;
+                input.classList.add('grey-text');
+                btnSend.classList.add('hidden');
+                btnNext.classList.remove('hidden');
+                input.value = localStorage.getItem('last_val') || "";
+            } else {
+                input.value = "";
+                input.disabled = false;
+                input.classList.remove('grey-text');
+                btnSend.classList.remove('hidden');
+                btnNext.classList.add('hidden');
+            }
+        }
+
+        async function sendAnswer() {
+            const val = document.getElementById('ans-input').value;
+            if (val === "") return;
+
+            isAnswered = true;
+            localStorage.setItem('stage_answered', "true");
+            localStorage.setItem('last_val', val);
+            updateUI();
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action: "sendAnswer", name: userName, answer: val })
+            });
+        }
+
+        async function nextQuestion() {
+            currentQ++;
+            isAnswered = false;
+            localStorage.setItem('stage_q', currentQ);
+            localStorage.setItem('stage_answered', "false");
+            updateUI();
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({ action: "clear", name: userName })
+            });
+        }
+    </script>
+</body>
+</html>
